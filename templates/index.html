@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoJudge - AI-Powered Difficulty Prediction</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -200px;
+            right: -200px;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            bottom: -150px;
+            left: -150px;
+            animation: float 15s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            animation: pulse 2s infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .header-text {
+            text-align: left;
+        }
+
+        h1 {
+            color: white;
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea::placeholder {
+            color: #a0aec0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .result {
+            margin-top: 40px;
+            padding: 0;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .result-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .result-header svg {
+            width: 32px;
+            height: 32px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .result-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .result-content {
+            background: linear-gradient(135deg, #f0f4ff 0%, #f8f0ff 100%);
+            padding: 35px 30px;
+            border-radius: 0 0 16px 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .result-item {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .result-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .result-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #718096;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .easy {
+            color: #38a169 !important; 
+        }
+
+        .medium {
+            color: #dd6b20 !important;  
+        }
+
+        .hard {
+            color: #e53e3e !important;  
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            animation: fadeIn 1s ease 0.5s backwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .footer-divider {
+            width: 60px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 15px auto;
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-text {
+                text-align: center;
+            }
+
+            .main-card {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .result-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="logo">
+            <svg viewBox="0 0 24 24">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <div class="header-text">
+            <h1>AutoJudge</h1>
+            <p class="subtitle">AI-Powered Programming Problem Difficulty Prediction</p>
+        </div>
+    </div>
+
+    <div class="main-card">
+        <form method="POST">
+            <div class="form-group">
+                <label for="title">Problem Title</label>
+                <textarea id="title" name="title" rows="1" placeholder="Enter the problem title..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Problem Description</label>
+                <textarea id="description" name="description" rows="2" placeholder="Describe the problem in detail..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="input">Input Description</label>
+                <textarea id="input" name="input_description" rows="1" placeholder="Explain the input format..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="output">Output Description</label>
+                <textarea id="output" name="output_description" rows="1" placeholder="Explain the expected output format..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Predict Difficulty</button>
+        </form>
+
+        {% if result %}
+        <div class="result">
+            <div class="result-header">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h2>Prediction Results</h2>
+            </div>
+            <div class="result-content">
+                <div class="result-item">
+                    <div class="result-label">Difficulty Class</div>
+                    <div class="result-value {{ result.class | lower }}">{{ result.class | capitalize }}</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Difficulty Score</div>
+                    <div class="result-value">{{ result.score }}</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="footer">
+        <div class="footer-divider"></div>
+        <p>AutoJudge • Machine Learning-Powered Analysis</p>
+    </div>
+</div>
+
+</body>
+</html>

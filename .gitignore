@@ -3,4 +3,5 @@ __pycache__/
 .env
 models/*.pkl
 data/*.csv
+data/raw/
 .vscode/
