@@ -156,6 +156,18 @@ The project includes a Flask-based web application that allows users to:
 The UI is clean, responsive, and designed for easy demonstration.
 
 ---
+## 📄 Project Report
+The detailed project report explaining the problem statement, dataset, preprocessing, feature engineering, models, evaluation metrics, and web interface is available here:
+
+👉 [Project Report (PDF)](https://drive.google.com/file/d/1zeX8r4hvQt6gNe2tsB2ktc5Z5dNY0guq/view?usp=sharing)
+
+---
+
+## 🎥 Demo Video
+A demo video showing the project overview, model approach, and working web interface is available here:
+
+👉 [Demo Video Link](https://drive.google.com/file/d/1a7yupkj6ZiORg8bL0AXlOAOt_zfjL7AR/view?usp=sharing)
+
 
 ## ▶️ How to Run
 
