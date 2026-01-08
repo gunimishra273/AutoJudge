@@ -171,19 +171,25 @@ A demo video showing the project overview, model approach, and working web inter
 
 ## ▶️ How to Run
 
-### 1️⃣ Install dependencies
+### 1️⃣ Clone the repository  
+```bash
+git clone https://github.com/gunimishra273/AutoJudge.git
+cd AutoJudge
+```
+
+### 2️⃣ Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2️⃣ Run the Flask app
+### 3️⃣ Run the Flask app
 
 ```bash
 python app.py
 ```
 
-### 3️⃣ Open in browser
+### 4️⃣ Open in browser
 
 ```
 http://127.0.0.1:5000
